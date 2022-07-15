@@ -141,10 +141,7 @@ export default function (opts: PuzzleOpts, redraw: Redraw): Controller {
     instanciateCeval();
   }
 
-  function position(): Chess {
-    const setup = parseFen(vm.node.fen).unwrap();
-    return Chess.fromSetup(setup).unwrap();
-  }
+  const position = (): Chess => Chess.fromSetup(parseFen(vm.node.fen).unwrap()).unwrap();
 
   function makeCgOpts(): CgConfig {
     const node = vm.node;
