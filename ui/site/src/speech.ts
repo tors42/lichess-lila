@@ -31,6 +31,5 @@ function hackFix(msg: string): string {
     .replace(/(\d) H (\d)/, '$1H$2'); // "H" is pronounced as "hour" when it comes after a number with a space (e.g. Rook 5 H 3)
 }
 
-export function step(s: { san?: San }, cut?: boolean) {
+export const step = (s: { san?: San }, cut?: boolean) =>
   lichess.sound.say(s.san ? renderSan(s.san) : 'Game start', cut);
-}
