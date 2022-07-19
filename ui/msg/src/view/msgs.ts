@@ -48,17 +48,15 @@ function contentMsgs(ctrl: MsgCtrl, msgs: Msg[]): VNode[] {
   return nodes;
 }
 
-function renderDaily(ctrl: MsgCtrl, daily: Daily): VNode[] {
-  return [
-    h('day', renderDate(daily.date, ctrl.trans)),
-    ...daily.msgs.map(group =>
-      h(
-        'group',
-        group.map(msg => renderMsg(ctrl, msg))
-      )
-    ),
-  ];
-}
+const renderDaily = (ctrl: MsgCtrl, daily: Daily): VNode[] => [
+  h('day', renderDate(daily.date, ctrl.trans)),
+  ...daily.msgs.map(group =>
+    h(
+      'group',
+      group.map(msg => renderMsg(ctrl, msg))
+    )
+  ),
+];
 
 function renderMsg(ctrl: MsgCtrl, msg: Msg) {
   const tag = msg.user == ctrl.data.me.id ? 'mine' : 'their';
