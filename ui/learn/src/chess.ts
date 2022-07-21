@@ -42,9 +42,7 @@ export default function (fen: string, appleKeys: Key[]): ChessCtrl {
     });
   }
 
-  function getColor() {
-    return chess.turn() == 'w' ? 'white' : 'black';
-  }
+  const getColor = () => (chess.turn() == 'w' ? 'white' : 'black');
 
   function setColor(c: Color) {
     const turn = c === 'white' ? 'w' : 'b';
