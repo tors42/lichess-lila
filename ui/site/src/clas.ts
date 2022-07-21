@@ -20,9 +20,7 @@ lichess.load.then(() => {
   $('#form3-teachers').each(function (this: HTMLTextAreaElement) {
     const textarea = this;
 
-    function currentUserIds() {
-      return textarea.value.split('\n').slice(0, -1);
-    }
+    const currentUserIds = () => textarea.value.split('\n').slice(0, -1);
 
     loadScript('vendor/textcomplete.min.js').then(() => {
       const textcomplete = new window.Textcomplete(new window.Textcomplete.editors.Textarea(textarea), {
