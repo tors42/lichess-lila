@@ -62,6 +62,9 @@ object ConditionForm:
       "teamId" -> of[TeamId].verifying(id => leaderTeams.exists(_.id == id))
     )(id => TeamMember(id, leaderTeams.find(_.id == id).err(s"Team $id not found").name))(_.teamId.some)
 
+  def creatorBlock(creator: UserId): Mapping[Option[CreatorBlock]] =
+    optional(boolean).transform(_.contains(true).option(CreatorBlock(creator)), _.isDefined.option(true))
+
   def allowList = optional:
     nonEmptyText(maxLength = 100_1000)
       .transform[String](_.replace(',', '\n'), identity)

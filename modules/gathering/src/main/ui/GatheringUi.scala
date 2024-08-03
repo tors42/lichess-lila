@@ -103,3 +103,11 @@ final class GatheringFormUi(helpers: Helpers):
       help = trans.arena.onlyTitledHelp().some,
       half = true
     )
+
+  def creatorBlock(field: Field)(using Translate) =
+    form3.checkbox(
+      field,
+      trans.arena.creatorBlock(),
+      help = trans.arena.creatorBlockHelp().some,
+      half = true
+    )

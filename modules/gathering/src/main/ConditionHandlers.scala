@@ -11,13 +11,14 @@ object ConditionHandlers:
     import reactivemongo.api.bson.*
     import lila.db.dsl.{ *, given }
 
-    given BSONDocumentHandler[NbRatedGame] = Macros.handler
-    given BSONDocumentHandler[MaxRating]   = Macros.handler
-    given BSONDocumentHandler[MinRating]   = Macros.handler
-    given BSONHandler[Titled.type]         = ifPresentHandler(Titled)
-    given BSONHandler[AccountAge]          = Macros.handler
-    given BSONDocumentHandler[TeamMember]  = Macros.handler
-    given BSONDocumentHandler[AllowList]   = Macros.handler
+    given BSONDocumentHandler[NbRatedGame]  = Macros.handler
+    given BSONDocumentHandler[MaxRating]    = Macros.handler
+    given BSONDocumentHandler[MinRating]    = Macros.handler
+    given BSONHandler[Titled.type]          = ifPresentHandler(Titled)
+    given BSONHandler[AccountAge]           = Macros.handler
+    given BSONDocumentHandler[TeamMember]   = Macros.handler
+    given BSONDocumentHandler[AllowList]    = Macros.handler
+    given BSONDocumentHandler[CreatorBlock] = Macros.handler
 
   object JSONHandlers:
     import lila.common.Json.given

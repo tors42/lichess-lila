@@ -96,7 +96,7 @@ final class TournamentForm:
       "mode"        -> optional(number.verifying(Mode.all.map(_.id) contains _)), // deprecated, use rated
       "rated"       -> optional(boolean),
       "password"    -> optional(cleanNonEmptyText),
-      "conditions"  -> TournamentCondition.form.all(leaderTeams),
+      "conditions"  -> TournamentCondition.form.all(leaderTeams, me),
       "teamBattleByTeam" -> optional(of[TeamId].verifying(id => leaderTeams.exists(_.id == id))),
       "berserkable"      -> optional(boolean),
       "streakable"       -> optional(boolean),

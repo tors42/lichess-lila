@@ -351,5 +351,6 @@ object Schedule:
         titled = none,
         teamMember = none,
         accountAge = none,
-        allowList = none
+        allowList = none,
+        creatorBlock = none
       )

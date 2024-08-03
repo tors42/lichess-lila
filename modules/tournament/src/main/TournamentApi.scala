@@ -37,6 +37,7 @@ final class TournamentApi(
     pause: Pause,
     waitingUsers: WaitingUsersApi,
     cacheApi: lila.memo.CacheApi,
+    relationApi: lila.core.relation.RelationApi,
     lightUserApi: lila.core.user.LightUserApi
 )(using Executor, akka.actor.ActorSystem, Scheduler, akka.stream.Materializer, lila.core.i18n.Translator)
     extends lila.core.tournament.TournamentApi:

@@ -154,6 +154,10 @@ final class TournamentForm(val helpers: Helpers, showUi: TournamentShow)(
       ),
       form3.split(
         gatheringFormUi.allowList(form.prefix("conditions.allowList")),
+        gatheringFormUi.creatorBlock(form.prefix("conditions.creatorBlock")),
+        form3.hiddenFalse(form.prefix("conditions.creatorBlock"))
+      ),
+      form3.split(
         (ctx.me.exists(_.hasTitle) || Granter.opt(_.ManageTournament)).so {
           gatheringFormUi.titled(form.prefix("conditions.titled"))
         }

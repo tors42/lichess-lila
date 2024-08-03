@@ -8,6 +8,7 @@ import lila.core.user.UserApi
 import lila.gathering.Condition.*
 import lila.gathering.{ Condition, ConditionList }
 import lila.rating.PerfType
+import lila.core.relation.RelationApi
 
 object TournamentCondition:
 
@@ -18,8 +19,11 @@ object TournamentCondition:
       titled: Option[Titled.type],
       teamMember: Option[TeamMember],
       accountAge: Option[AccountAge],
-      allowList: Option[AllowList]
-  ) extends ConditionList(List(nbRatedGame, maxRating, minRating, titled, teamMember, accountAge, allowList)):
+      allowList: Option[AllowList],
+      creatorBlock: Option[CreatorBlock]
+  ) extends ConditionList(
+        List(nbRatedGame, maxRating, minRating, titled, teamMember, accountAge, allowList, creatorBlock)
+      ):
 
     def withVerdicts(perfType: PerfType)(using
         Me,
@@ -27,14 +31,16 @@ object TournamentCondition:
         Executor,
         GetMaxRating,
         GetMyTeamIds,
-        GetAge
+        GetAge,
+        GetBlocked
     ): Fu[WithVerdicts] =
       list
         .parallel:
-          case c: MaxRating  => c(perfType).map(c.withVerdict)
-          case c: FlatCond   => fuccess(c.withVerdict(c(perfType)))
-          case c: TeamMember => c.apply.map { c.withVerdict(_) }
-          case c: AccountAge => c.apply.map { c.withVerdict(_) }
+          case c: MaxRating    => c(perfType).map(c.withVerdict)
+          case c: FlatCond     => fuccess(c.withVerdict(c(perfType)))
+          case c: TeamMember   => c.apply.map { c.withVerdict(_) }
+          case c: AccountAge   => c.apply.map { c.withVerdict(_) }
+          case c: CreatorBlock => c.apply.map { c.withVerdict(_) }
         .dmap(WithVerdicts.apply)
 
     def withRejoinVerdicts(using
@@ -60,28 +66,30 @@ object TournamentCondition:
           prev.allowList.so(_.userIds.diff(current))
 
   object All:
-    val empty             = All(none, none, none, none, none, none, none)
+    val empty             = All(none, none, none, none, none, none, none, none)
     given zero: Zero[All] = Zero(empty)
 
   object form:
     import play.api.data.Forms.*
     import lila.gathering.ConditionForm.*
-    def all(leaderTeams: List[LightTeam]) =
+    def all(leaderTeams: List[LightTeam], creator: UserId) =
       mapping(
-        "nbRatedGame" -> nbRatedGame,
-        "maxRating"   -> maxRating,
-        "minRating"   -> minRating,
-        "titled"      -> titled,
-        "teamMember"  -> teamMember(leaderTeams),
-        "accountAge"  -> accountAge,
-        "allowList"   -> allowList
+        "nbRatedGame"  -> nbRatedGame,
+        "maxRating"    -> maxRating,
+        "minRating"    -> minRating,
+        "titled"       -> titled,
+        "teamMember"   -> teamMember(leaderTeams),
+        "accountAge"   -> accountAge,
+        "allowList"    -> allowList,
+        "creatorBlock" -> creatorBlock(creator)
       )(All.apply)(unapply).verifying("Invalid ratings", _.validRatings)
 
-  final class Verify(historyApi: HistoryApi, userApi: UserApi)(using Executor):
+  final class Verify(historyApi: HistoryApi, userApi: UserApi, relationApi: RelationApi)(using Executor):
 
     def apply(all: All, perfType: PerfType)(using me: Me)(using GetMyTeamIds, Perf): Fu[WithVerdicts] =
       given GetMaxRating = historyApi.lastWeekTopRating(me.userId, _)
       given GetAge       = me => userApi.accountAge(me.userId)
+      given GetBlocked   = (creator, me) => relationApi.fetchBlocks(creator, me.userId)
       all.withVerdicts(perfType)
 
     def rejoin(all: All)(using Me)(using GetMyTeamIds): Fu[WithVerdicts] =

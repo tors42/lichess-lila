@@ -21,6 +21,7 @@ object Condition:
   type GetMaxRating = PerfType => Fu[IntRating]
   type GetMyTeamIds = Me => Fu[List[TeamId]]
   type GetAge       = Me => Fu[Days]
+  type GetBlocked   = (UserId, Me) => Fu[Boolean]
 
   enum Verdict(val accepted: Boolean, val reason: Option[Translate => String]):
     case Accepted                              extends Verdict(true, none)
@@ -116,6 +117,15 @@ object Condition:
           Refused: t =>
             given Translate = t
             trans.site.youAreNotInTeam.txt(teamName)
+
+  case class CreatorBlock(creator: UserId) extends Condition:
+    def name(pt: PerfType)(using Translate) = "Not Blocked"
+    def apply(using getBlocked: GetBlocked, me: Me)(using Executor): Fu[Verdict] =
+      if creator.is(UserId.lichess) then fuccess(Accepted)
+      else
+        getBlocked(creator, me).map: blocked =>
+          if blocked then Refused(_ => "You are blocked")
+          else Accepted
 
   case class AllowList(value: String) extends Condition with FlatCond:
     private lazy val segments: Set[String] = value.linesIterator.map(_.trim.toLowerCase).toSet

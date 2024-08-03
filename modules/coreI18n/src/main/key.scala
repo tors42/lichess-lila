@@ -947,6 +947,8 @@ object I18nKey:
     val `tournamentShields`: I18nKey = "arena:tournamentShields"
     val `onlyTitled`: I18nKey = "arena:onlyTitled"
     val `onlyTitledHelp`: I18nKey = "arena:onlyTitledHelp"
+    val `creatorBlock`: I18nKey = "arena:creatorBlock"
+    val `creatorBlockHelp`: I18nKey = "arena:creatorBlockHelp"
     val `drawingWithinNbMoves`: I18nKey = "arena:drawingWithinNbMoves"
     val `viewAllXTeams`: I18nKey = "arena:viewAllXTeams"
 
